@@ -200,6 +200,8 @@
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <None Include="Scripts\jquery-2.1.0.intellisense.js" />
+    <Content Include="Scripts\app\index.js" />
+    <Content Include="Scripts\app\globals.js" />
     <Content Include="Scripts\jquery-2.1.0.js" />
     <Content Include="Scripts\jquery-2.1.0.min.js" />
     <Content Include="Scripts\jquery-2.1.0.min.map" />

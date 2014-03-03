@@ -1,18 +1,29 @@
 ﻿@model dynamic
 
 @{
-    Layout = null;
+    ViewBag.Title = "title";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<h2>Your seat reservations</h2>
 
-<!DOCTYPE html>
+<table>
+    <thead>
+        <tr>
+            <th>Passenger name</th>
+            <th>Meal</th>
+            <th>Surcharge</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody data-bind="foreach: seats">
+        <tr>
+            <td><input data-bind="value: name" /></td>
+            <td><select data-bind="options: $root.availableMeals, value: meal, optionsText: 'mealName'"></select></td>
+            <td data-bind="text: formattedPrice"></td>
+        </tr>
+    </tbody>
+</table>
 
-<html>
-    <head>
-        <title>title</title>
-    </head>
-    <body>
-        <div>
-              
-        </div>
-    </body>
-</html>
+<button data-bind="click: addSeat">Reserve another seat</button>
+
+<script src="~/Scripts/app/index.js"></script>
