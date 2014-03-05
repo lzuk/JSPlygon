@@ -1,36 +1,44 @@
-﻿function SeatReservation(name, initialMeal) {
-    var self = this;
-    self.name = name;
-    self.meal = ko.observable(initialMeal);
+﻿function Task(data) {
+    this.title = ko.observable(data.Title);
+    this.isDone = ko.observable(data.IsDone);
+    this.guid = null;
+}
 
-    self.formattedPrice = ko.computed(function () {
-        var price = self.meal().price;
-        return price ? "$" + price.toFixed(2) : "None";
+function TaskListViewModel() {
+    // Data
+    var self = this;
+    self.tasks = ko.observableArray([]);
+    self.newTaskText = ko.observable();
+    self.incompleteTasks = ko.computed(function () {
+        return ko.utils.arrayFilter(self.tasks(), function (task) { return !task.isDone(); });
+    });
+
+    // Operations
+    self.addTask = function () {
+        var data = { "title": self.newTaskText(), "isDone": false };
+        var freshTask = new Task(data);
+        self.tasks.push(freshTask);
+
+
+        $.ajax({
+            type: "post", url: "/api/task/Post",
+            success: function(data) {
+                //alert(data); //server response (GUID or sth)
+            },
+            data: { "title": self.newTaskText(), "isDone": false },
+            accept: 'application/json'
+        });
+
+        self.newTaskText("");
+    };
+    self.removeTask = function (task) { self.tasks.remove(task); };
+
+    // Load initial state from server, convert it to Task instances, then populate self.tasks
+    self.updateFromServer = $.getJSON("/api/task", function (allData) {
+        var mappedTasks = $.map(allData, function (item) { return new Task(item); });
+        self.tasks(mappedTasks);
     });
 }
 
-// Overall viewmodel for this screen, along with initial state
-function ReservationsViewModel() {
-    var self = this;
-
-    // Non-editable catalog data - would come from the server
-    self.availableMeals = [
-        { mealName: "Standard (sandwich)", price: 0 },
-        { mealName: "Premium (lobster)", price: 34.95 },
-        { mealName: "Ultimate (whole zebra)", price: 290 }
-    ];
-
-    // Editable data
-    self.seats = ko.observableArray([
-        new SeatReservation("Steve", self.availableMeals[0]),
-        new SeatReservation("Bert", self.availableMeals[0])
-    ]);
-
-    // Operations
-    self.addSeat = function() {
-        self.seats.push(new SeatReservation("", self.availableMeals[0]));
-    };
-}
-
-VM.first = new ReservationsViewModel;
+VM.first = new TaskListViewModel;
 ko.applyBindings(VM.first);

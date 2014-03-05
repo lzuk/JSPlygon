@@ -4,26 +4,23 @@
     ViewBag.Title = "title";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<h2>Your seat reservations</h2>
+<h3>Tasks</h3>
 
-<table>
-    <thead>
-        <tr>
-            <th>Passenger name</th>
-            <th>Meal</th>
-            <th>Surcharge</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody data-bind="foreach: seats">
-        <tr>
-            <td><input data-bind="value: name" /></td>
-            <td><select data-bind="options: $root.availableMeals, value: meal, optionsText: 'mealName'"></select></td>
-            <td data-bind="text: formattedPrice"></td>
-        </tr>
-    </tbody>
-</table>
+<form data-bind="submit: addTask">
+    Add task: <input data-bind="value: newTaskText" placeholder="What needs to be done?" />
+    <button type="submit">Add</button>
+</form>
 
-<button data-bind="click: addSeat">Reserve another seat</button>
+<ul data-bind="foreach: tasks, visible: tasks().length > 0">
+    <li>
+        <input type="checkbox" data-bind="checked: isDone" />
+        <input data-bind="value: title, disable: isDone" />
+        <a href="#" data-bind="click: $parent.removeTask">Delete</a>
+    </li>
+</ul>
 
+You have <b data-bind="text: incompleteTasks().length">&nbsp;</b> incomplete task(s)
+<span data-bind="visible: incompleteTasks().length == 0"> - it's beer time!</span>
+
+<button data-bind="click: updateFromServer">Refresh</button>
 <script src="~/Scripts/app/index.js"></script>
